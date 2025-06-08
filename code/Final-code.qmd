@@ -47,6 +47,30 @@ We found a **effect size** (Cohen's d = **Cohen's d value**) difference in avera
 
 # Problem 2. Data Visualzation
 
+## a. Cleaning and summarizing 
+
+Notes to myself on things that need to be done or be true abt the data table:
+1. 72 rows total (this likley means each month has a row for all 6 years)
+2. year data is factors not numbers
+3. month data is ordinal factor data
+4. the third column is mean sst (so I need to find the mean temp for each month in each year so like Aug 2018 is a different row than aug 2019)
+
+```{r}
+
+sst_clean <-  sst |> 
+  select(date, temp) |> 
+  mutate(date = ymd(date)) |> 
+  mutate(Year = year(date)) |> 
+  filter(Year == c("2018", "2019", "2020", "2021", "2022", "2023")) |> 
+  mutate(as.factor(Year))
+  
+  
+  
+
+
+
+```
+
 
 
 
