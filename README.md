@@ -14,9 +14,12 @@ This project is a final course assignment that contains 4 main problems: Researc
 
 The "code" folder contains the main code document titled Final-code.qmd. The "data" folder contains all data used in the project:
 
-1.  From  SBC LTER’s data catalog: "Daily sea surface temperature in Santa Barbara channel between 1982 and 2023." This data was used in problem 2.
+1.  From SBC LTER’s data catalog: "Daily sea surface temperature in Santa Barbara channel between 1982 and 2023." This data was used in problem 2.
+2.  From Restoration Ecology journal "Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird"
 
 ^1^data citation: Kui, L. 2024. Daily sea surface temperature in Santa Barbara channel between 1982 and 2023 ver 3. Environmental Data Initiative. <https://doi.org/10.6073/pasta/e930954949b2635928b8be6824630f84>. Accessed 2025-06-07.
+
+^2^data citation: Stojanovic, Dejan et al. (2021). Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird [Dataset]. Dryad. <https://doi.org/10.5061/dryad.83bk3j9sb>
 
 This is where a description of the data and files could go. For example, you could describe:
 

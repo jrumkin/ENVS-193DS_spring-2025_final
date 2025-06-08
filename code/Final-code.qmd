@@ -23,9 +23,9 @@ library(here) #for file management
 #read in data used for assignment
 sst <- read.csv(here("data", "SST_update2023.csv")) #using package 'here' to fix file path issue
 
+nest_boxes <-  read.csv(here("data", "occdist.csv")) #using 'here' to fix file path render issue
 
 ```
-
 
 # Problem 1. Research Writing
 
@@ -33,27 +33,23 @@ sst <- read.csv(here("data", "SST_update2023.csv")) #using package 'here' to fix
 
 In part 1 they used ((something to determine correlation between variables)). In part 2 they used ((something to determine if there is a difference in means between more than 2 groups)).
 
-## b. More information needed ***
+## b. More information needed \*\*\*
 
-An additional piece of information that should be given is the type of t-test that was ran in both parts so the reader can use that to learn about the data type and assumptions made. 
+An additional piece of information that should be given is the type of t-test that was ran in both parts so the reader can use that to learn about the data type and assumptions made.
 
-An additional test that could be performed is a Cohen's d in order to quantify the effect size between groups. This increases data transparency and helps the reader understand the result. 
+An additional test that could be performed is a Cohen's d in order to quantify the effect size between groups. This increases data transparency and helps the reader understand the result.
 
 ## c. Suggestions for rewriting
 
-We found a **effect size** (Cohen's d = **Cohen's d value**) correlation between distance from headwater (km) and annual total nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.03, $\alpha$ = **significance level**). 
+We found a **effect size** (Cohen's d = **Cohen's d value**) correlation between distance from headwater (km) and annual total nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.03, $\alpha$ = **significance level**).
 
 We found a **effect size** (Cohen's d = **Cohen's d value**) difference in average nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.02, $\alpha$ = **significance level**) between sources (urban land n = **group sample size**, atmospheric deposition n = **group sample size**, fertilizer n = **group sample size**, wastewater treatment n = **group sample size**, and grasslands n = **group sample size**).
 
 # Problem 2. Data Visualzation
 
-## a. Cleaning and summarizing 
+## a. Cleaning and summarizing
 
-Notes to myself on things that need to be done or be true abt the data table:
-1. 72 rows total (this likley means each month has a row for all 6 years)
-2. year data is factors not numbers
-3. month data is ordinal factor data
-4. the third column is mean sst (so I need to find the mean temp for each month in each year so like Aug 2018 is a different row than aug 2019)
+Notes to myself on things that need to be done or be true abt the data table: 1. 72 rows total (this likley means each month has a row for all 6 years) 2. year data is factors not numbers 3. month data is ordinal factor data 4. the third column is mean sst (so I need to find the mean temp for each month in each year so like Aug 2018 is a different row than aug 2019)
 
 ```{r}
 
@@ -77,20 +73,19 @@ str(sst_clean) #display sst_clean data structure
 
 ```
 
-
 ## b. Visualize the data
 
 ```{r}
 
-sst_visual <- ggplot(data = sst_clean,
-                     aes(x = month,
-                         y = mean_monthly_sst,
+sst_visual <- ggplot(data = sst_clean, # make a new object called sst_visual, use ggplot to make a visualization from data sst_clean
+                     aes(x = month, # month on x axis
+                         y = mean_monthly_sst, # temp on y axis
                          group = year,
                          color = year)) +
   geom_line() +
   geom_point() +
   scale_color_manual(name = "Year", 
-                     values = c("2018" = "#ECD7FB", #manually assign colors by group
+                     values = c("2018" = "#DDADFE", #manually assign colors by group
                            "2019" = "#BB9AD3", 
                            "2020" = "#9A78B1", 
                            "2021" = "#785590", 
@@ -109,6 +104,36 @@ sst_visual
 
 
 ```
+
+# Problem 3 Data analysis
+
+```{r}
+#| label: Cleaning next_boxes data
+#| include: false
+
+nest_clean <- nest_boxes |> 
+  clean_names() #clean the names of columns to remove . and replace with _
+
+
+
+
+```
+
+##. a. Response variable
+
+The 1s and 0s in the columns sp, cs, and tm represent the species type in each nest box observation for Swift Parrot, Common Starling, and Tree Martin respectively where a 1 means that species was observed and a0 means it was another species or empty. The column e represents if the nest box was occupied or not, with a 1 meaning it was empty and a 0 meaning it was occupied.
+
+## b. Purpose of study
+
+Swift Parrots are unique because they are the focus bird for restoration purposes and they have unique nesting habits that make as little of 5% of the available area suitable for their nesting and they do not return to nesting sites of previous years. The other two species, Common Starlings and Tree Martins, are common and abundant in the study area and reported behavior of using nest boxes intended for other species.
+
+## c. Difference in “seasons”
+
+"Our study presents data from the summer breeding seasons of 2016 and 2019 when parrots bred at the study area **(during the interval, parrots were absent from the site)" WHYY**
+
+The study uses data on the summer breeding seasons of 2016 and of 2019. Data was collected in November and some in December in each study season, which coincided with the fledging period for Common Starlings, mid nestling period for Swift Parrots, and nest building for Tree Martins.
+
+## d. Table of models
 
 
 
