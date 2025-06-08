@@ -1,0 +1,53 @@
+---
+title: "Final-code"
+author: "Jessi Rumkin"
+date: "June 2, 2025"
+format:
+  html:
+    toc: true # to display a table of contents
+execute:
+  message: false # make sure messages don't show up
+  warning: false # make sure warnings don't show up
+---
+
+link to GitHub repo: <https://github.com/jrumkin/ENVS-193DS_spring-2025_final>
+
+# Set Up
+
+```{r}
+#read in packages
+library(tidyverse)
+library(janitor)
+library(here) #for file management
+
+#read in data used for assignment
+sst <- read.csv(here("data", "SST_update2023.csv")) #using package 'here' to fix file path issue
+
+
+```
+
+
+# Problem 1. Research Writing
+
+## a. Transparent statistical methods
+
+In part 1 they used ((something to determine correlation between variables)). In part 2 they used ((something to determine if there is a difference in means between more than 2 groups)).
+
+## b. More information needed ***
+
+An additional piece of information that should be given is the type of t-test that was ran in both parts so the reader can use that to learn about the data type and assumptions made. 
+
+An additional test that could be performed is a Cohen's d in order to quantify the effect size between groups. This increases data transparency and helps the reader understand the result. 
+
+## c. Suggestions for rewriting
+
+We found a **effect size** (Cohen's d = **Cohen's d value**) correlation between distance from headwater (km) and annual total nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.03, $\alpha$ = **significance level**). 
+
+We found a **effect size** (Cohen's d = **Cohen's d value**) difference in average nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.02, $\alpha$ = **significance level**) between sources (urban land n = **group sample size**, atmospheric deposition n = **group sample size**, fertilizer n = **group sample size**, wastewater treatment n = **group sample size**, and grasslands n = **group sample size**).
+
+# Problem 2. Data Visualzation
+
+
+
+
+
