@@ -83,7 +83,29 @@ str(sst_clean) #display sst_clean data structure
 ```{r}
 
 sst_visual <- ggplot(data = sst_clean,
-                     aes())
+                     aes(x = month,
+                         y = mean_monthly_sst,
+                         group = year,
+                         color = year)) +
+  geom_line() +
+  geom_point() +
+  scale_color_manual(name = "Year", 
+                     values = c("2018" = "#ECD7FB", #manually assign colors by group
+                           "2019" = "#BB9AD3", 
+                           "2020" = "#9A78B1", 
+                           "2021" = "#785590", 
+                           "2022" = "#523467", 
+                           "2023" = "#2F193E" )) +
+  theme_bw() +
+  theme(plot.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(),   # remove major gridlines
+        panel.grid.minor = element_blank(), #remove minor gridlines
+        legend.position = c(0.1, 0.7)) +
+  labs( x = "Month",
+        y = "Mean monthly sea surface temperature (°C)",
+        legend = "Year")
+
+sst_visual
 
 
 ```
