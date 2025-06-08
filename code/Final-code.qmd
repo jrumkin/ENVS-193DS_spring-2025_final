@@ -1,7 +1,7 @@
 ---
 title: "Final-code"
 author: "Jessi Rumkin"
-date: "June 2, 2025"
+date: "June 7, 2025"
 format:
   html:
     toc: true # to display a table of contents
@@ -58,20 +58,35 @@ Notes to myself on things that need to be done or be true abt the data table:
 ```{r}
 
 sst_clean <-  sst |> 
-  select(date, temp) |> 
-  mutate(date = ymd(date)) |> 
-  mutate(Year = year(date)) |> 
-  filter(Year == c("2018", "2019", "2020", "2021", "2022", "2023")) |> 
-  mutate(as.factor(Year))
+  mutate(date = ymd(date), #make the date column into year-month-date recognized data
+         year = year(date), #make a new column of the year from the date column
+         month = month(date)) |>  #make a new column of the month from the date column
+  filter(year == c("2018", "2019", "2020", "2021", "2022", "2023")) |> #select only rows from those years 2018 - 2023
+  select(year, month, temp) |> #select columns year, month, and temp
+  group_by(year, month) |> #group the data by year and then month
+  summarise(mean_monthly_sst = round((mean(temp, na.rm = TRUE)), 1)) |>  #calculate mean monthly sea surface temps in each month of each selected year
+  mutate(year = as.factor(year)) |> #set year column as a factor
+  mutate(month = factor(month.abb[month], #set the month column to factor using the abbreviated month names
+                           levels = month.abb, #the levels of the ordinal factor are set my the month abbreviations
+                           ordered = TRUE)) |>   #makes the factor ordinal
+  ungroup() #ungroup the data to be worked with normally later
   
-  
-  
-
+slice_sample(sst_clean, n = 5)  #display 5 random rows from sst_clean
+str(sst_clean) #display sst_clean data structure
 
 
 ```
 
 
+## b. Visualize the data
+
+```{r}
+
+sst_visual <- ggplot(data = sst_clean,
+                     aes())
+
+
+```
 
 
 

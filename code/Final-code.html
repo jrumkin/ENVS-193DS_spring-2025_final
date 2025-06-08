@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jessi Rumkin">
-<meta name="dcterms.date" content="2025-06-02">
+<meta name="dcterms.date" content="2025-06-07">
 
 <title>Final-code</title>
 <style>
@@ -120,6 +120,7 @@ window.Quarto = {
   <li><a href="#problem-2.-data-visualzation" id="toc-problem-2.-data-visualzation" class="nav-link" data-scroll-target="#problem-2.-data-visualzation">Problem 2. Data Visualzation</a>
   <ul class="collapse">
   <li><a href="#a.-cleaning-and-summarizing" id="toc-a.-cleaning-and-summarizing" class="nav-link" data-scroll-target="#a.-cleaning-and-summarizing">a. Cleaning and summarizing</a></li>
+  <li><a href="#b.-visualize-the-data" id="toc-b.-visualize-the-data" class="nav-link" data-scroll-target="#b.-visualize-the-data">b. Visualize the data</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -145,7 +146,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 2, 2025</p>
+      <p class="date">June 7, 2025</p>
     </div>
   </div>
   
@@ -194,11 +195,44 @@ window.Quarto = {
 <p>Notes to myself on things that need to be done or be true abt the data table: 1. 72 rows total (this likley means each month has a row for all 6 years) 2. year data is factors not numbers 3. month data is ordinal factor data 4. the third column is mean sst (so I need to find the mean temp for each month in each year so like Aug 2018 is a different row than aug 2019)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sst_clean <span class="ot">&lt;-</span>  sst <span class="sc">|&gt;</span> </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, temp) <span class="sc">|&gt;</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">ymd</span>(date)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">year</span>(date)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="fu">c</span>(<span class="st">"2018"</span>, <span class="st">"2019"</span>, <span class="st">"2020"</span>, <span class="st">"2021"</span>, <span class="st">"2022"</span>, <span class="st">"2023"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">as.factor</span>(Year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">ymd</span>(date), <span class="co">#make the date column into year-month-date recognized data</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">year =</span> <span class="fu">year</span>(date), <span class="co">#make a new column of the year from the date column</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">month =</span> <span class="fu">month</span>(date)) <span class="sc">|&gt;</span>  <span class="co">#make a new column of the month from the date column</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="fu">c</span>(<span class="st">"2018"</span>, <span class="st">"2019"</span>, <span class="st">"2020"</span>, <span class="st">"2021"</span>, <span class="st">"2022"</span>, <span class="st">"2023"</span>)) <span class="sc">|&gt;</span> <span class="co">#select only rows from those years 2018 - 2023</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, month, temp) <span class="sc">|&gt;</span> <span class="co">#select columns year, month, and temp</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month) <span class="sc">|&gt;</span> <span class="co">#group the data by year and then month</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_monthly_sst =</span> <span class="fu">round</span>((<span class="fu">mean</span>(temp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), <span class="dv">1</span>)) <span class="sc">|&gt;</span>  <span class="co">#calculate mean monthly sea surface temps in each month of each selected year</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.factor</span>(year)) <span class="sc">|&gt;</span> <span class="co">#set year column as a factor</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">factor</span>(month.abb[month], <span class="co">#set the month column to factor using the abbreviated month names</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">levels =</span> month.abb, <span class="co">#the levels of the ordinal factor are set my the month abbreviations</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">ordered =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span>   <span class="co">#makes the factor ordinal</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="co">#ungroup the data to be worked with normally later</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">slice_sample</span>(sst_clean, <span class="at">n =</span> <span class="dv">5</span>)  <span class="co">#display 5 random rows from sst_clean</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  year  month mean_monthly_sst
+  &lt;fct&gt; &lt;ord&gt;            &lt;dbl&gt;
+1 2021  Sep               17  
+2 2020  Sep               18.7
+3 2020  Jan               14.6
+4 2019  Jun               15.8
+5 2020  May               14.5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sst_clean) <span class="co">#display sst_clean data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [72 × 3] (S3: tbl_df/tbl/data.frame)
+ $ year            : Factor w/ 6 levels "2018","2019",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ month           : Ord.factor w/ 12 levels "Jan"&lt;"Feb"&lt;"Mar"&lt;..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ mean_monthly_sst: num [1:72] 15.1 14.3 13.5 12.8 13.6 15.5 18.2 19.6 18.2 18.4 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-visualize-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="b.-visualize-the-data">b. Visualize the data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sst_visual <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> sst_clean,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">aes</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
