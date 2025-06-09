@@ -95,7 +95,7 @@ sst_visual <- ggplot(data = sst_clean, # make a new object called sst_visual, us
   theme(plot.background = element_rect(fill = "white"),
         panel.grid.major = element_blank(),   # remove major gridlines
         panel.grid.minor = element_blank(), #remove minor gridlines
-        legend.position = c(0.1, 0.7)) +
+        legend.position = c(.1, .7)) + #***
   labs( x = "Month",
         y = "Mean monthly sea surface temperature (°C)",
         legend = "Year")
@@ -111,10 +111,21 @@ sst_visual
 #| label: Cleaning next_boxes data
 #| include: false
 
-nest_clean <- nest_boxes |> 
-  clean_names() #clean the names of columns to remove . and replace with _
+nest_clean <- nest_boxes |> #make an object called nest_clean
+  clean_names() |> #clean the names to get rid of "."
+  mutate(box_occupant = as.factor(box_occupant)) #make box_occupant a facotr w 4 levels
 
+nest_explore <- nest_boxes |> 
+  clean_names() |>  #clean the names of columns to remove . and replace with _ 
+  mutate(bin = cut(edge_distance, breaks = 10)) |> 
+  group_by(bin) |> 
+  summarise(prop_occupied = mean(sp),
+            mid = mean(edge_distance)) |> 
+  ggplot(aes(x = mid, y = prop_occupied)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 
+nest_explore
 
 
 ```
@@ -134,6 +145,26 @@ Swift Parrots are unique because they are the focus bird for restoration purpose
 The study uses data on the summer breeding seasons of 2016 and of 2019. Data was collected in November and some in December in each study season, which coincided with the fledging period for Common Starlings, mid nestling period for Swift Parrots, and nest building for Tree Martins.
 
 ## d. Table of models
+
+| Model Number | Season | Distance to forest edge | Model description           |
+|--------------|--------|-------------------------|-----------------------------|
+| 0            |        |                         | No predictors (null)        |
+| 1            | X      |                         | Year only                   |
+| 2            |        | X                       | Distance only               |
+| 3            | X      | X                       | Year + Distance (saturated) |
+
+
+## e. Run the models
+
+```{r}
+
+
+
+
+```
+
+
+
 
 
 
