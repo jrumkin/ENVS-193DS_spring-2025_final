@@ -127,6 +127,8 @@ window.Quarto = {
   <li><a href="#b.-purpose-of-study" id="toc-b.-purpose-of-study" class="nav-link" data-scroll-target="#b.-purpose-of-study">b. Purpose of study</a></li>
   <li><a href="#c.-difference-in-seasons" id="toc-c.-difference-in-seasons" class="nav-link" data-scroll-target="#c.-difference-in-seasons">c.&nbsp;Difference in “seasons”</a></li>
   <li><a href="#d.-table-of-models" id="toc-d.-table-of-models" class="nav-link" data-scroll-target="#d.-table-of-models">d.&nbsp;Table of models</a></li>
+  <li><a href="#e.-run-the-models" id="toc-e.-run-the-models" class="nav-link" data-scroll-target="#e.-run-the-models">e. Run the models</a></li>
+  <li><a href="#f.-check-the-diagnostics" id="toc-f.-check-the-diagnostics" class="nav-link" data-scroll-target="#f.-check-the-diagnostics">f.&nbsp;Check the diagnostics</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -172,11 +174,12 @@ window.Quarto = {
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#for file management</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#read in data used for assignment</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sst <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"SST_update2023.csv"</span>)) <span class="co">#using package 'here' to fix file path issue</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>nest_boxes <span class="ot">&lt;-</span>  <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"occdist.csv"</span>)) <span class="co">#using 'here' to fix file path render issue</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa) <span class="co">#for model diagnostics</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#read in data used for assignment</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sst <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"SST_update2023.csv"</span>)) <span class="co">#using package 'here' to fix file path issue</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>nest_boxes <span class="ot">&lt;-</span>  <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"occdist.csv"</span>)) <span class="co">#using 'here' to fix file path render issue</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="problem-1.-research-writing" class="level1">
@@ -221,11 +224,11 @@ window.Quarto = {
 <pre><code># A tibble: 5 × 3
   year  month mean_monthly_sst
   &lt;fct&gt; &lt;ord&gt;            &lt;dbl&gt;
-1 2023  May               14.3
-2 2020  Feb               14.7
-3 2019  Aug               17  
-4 2019  Jul               16.4
-5 2020  Aug               17.8</code></pre>
+1 2019  Nov               16.8
+2 2018  Jun               15.5
+3 2018  May               13.6
+4 2021  Jan               13.9
+5 2019  Jan               14.7</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sst_clean) <span class="co">#display sst_clean data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -257,7 +260,7 @@ window.Quarto = {
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>),</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),   <span class="co"># remove major gridlines</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), <span class="co">#remove minor gridlines</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.7</span>)) <span class="sc">+</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="fu">c</span>(.<span class="dv">1</span>, .<span class="dv">7</span>)) <span class="sc">+</span> <span class="co">#***</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x =</span> <span class="st">"Month"</span>,</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Mean monthly sea surface temperature (°C)"</span>,</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend =</span> <span class="st">"Year"</span>)</span>
@@ -288,6 +291,115 @@ window.Quarto = {
 </section>
 <section id="d.-table-of-models" class="level2">
 <h2 class="anchored" data-anchor-id="d.-table-of-models">d.&nbsp;Table of models</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 27%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model Number</th>
+<th>Season</th>
+<th>Distance to forest edge</th>
+<th>Model description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td></td>
+<td></td>
+<td>No predictors (null)</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>X</td>
+<td>X</td>
+<td>Year + Distance (saturated)</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>X</td>
+<td></td>
+<td>Year only</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td></td>
+<td>X</td>
+<td>Distance only</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="e.-run-the-models" class="level2">
+<h2 class="anchored" data-anchor-id="e.-run-the-models">e. Run the models</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span>  <span class="fu">glm</span>(sp <span class="sc">~</span> <span class="dv">1</span>, <span class="co">#null model</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> nest_clean,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span>  <span class="fu">glm</span>(sp <span class="sc">~</span> season <span class="sc">+</span> edge_distance, <span class="co">#saturated model</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> nest_clean,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(sp <span class="sc">~</span> season,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> nest_clean,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span>  <span class="fu">glm</span>(sp <span class="sc">~</span> edge_distance,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> nest_clean,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="f.-check-the-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="f.-check-the-diagnostics">f.&nbsp;Check the diagnostics</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate residuals</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>res1 <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mod1)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>res2 <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mod2)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>res3 <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mod3)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>res4 <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mod4)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Set plotting layout</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot each separately</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res1, <span class="at">main =</span> <span class="st">"Null"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-code_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res2, <span class="at">main =</span> <span class="st">"Saturated"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-code_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res3, <span class="at">main =</span> <span class="st">"Model 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-code_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res4, <span class="at">main =</span> <span class="st">"Model 4"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Final-code_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 

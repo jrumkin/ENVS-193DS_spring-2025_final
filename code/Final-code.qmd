@@ -19,6 +19,7 @@ link to GitHub repo: <https://github.com/jrumkin/ENVS-193DS_spring-2025_final>
 library(tidyverse)
 library(janitor)
 library(here) #for file management
+library(DHARMa) #for model diagnostics
 
 #read in data used for assignment
 sst <- read.csv(here("data", "SST_update2023.csv")) #using package 'here' to fix file path issue
@@ -113,7 +114,7 @@ sst_visual
 
 nest_clean <- nest_boxes |> #make an object called nest_clean
   clean_names() |> #clean the names to get rid of "."
-  mutate(box_occupant = as.factor(box_occupant)) #make box_occupant a facotr w 4 levels
+  mutate(season = as.factor(season)) #make box_occupant a factor w 4 levels
 
 nest_explore <- nest_boxes |> 
   clean_names() |>  #clean the names of columns to remove . and replace with _ 
@@ -147,22 +148,57 @@ The study uses data on the summer breeding seasons of 2016 and of 2019. Data was
 ## d. Table of models
 
 | Model Number | Season | Distance to forest edge | Model description           |
-|--------------|--------|-------------------------|-----------------------------|
-| 0            |        |                         | No predictors (null)        |
-| 1            | X      |                         | Year only                   |
-| 2            |        | X                       | Distance only               |
-| 3            | X      | X                       | Year + Distance (saturated) |
-
+|---------------|---------------|--------------------|-----------------------|
+| 1            |        |                         | No predictors (null)        |
+| 2            | X      | X                       | Year + Distance (saturated) |
+| 3            | X      |                         | Year only                   |
+| 4            |        | X                       | Distance only               |
 
 ## e. Run the models
 
 ```{r}
 
+mod1 <-  glm(sp ~ 1, #null model
+                   data = nest_clean,
+                   family = "binomial")
 
+mod2 <-  glm(sp ~ season + edge_distance, #saturated model
+             data = nest_clean,
+             family = "binomial")
+
+mod3 <- glm(sp ~ season,
+            data = nest_clean,
+            family = "binomial")
+
+mod4 <-  glm(sp ~ edge_distance,
+             data = nest_clean,
+             family = "binomial")
+
+```
+
+## f. Check the diagnostics
+
+```{r}
+# Simulate residuals for each model
+res1 <- simulateResiduals(mod1) #null
+res2 <- simulateResiduals(mod2) #saturated 
+res3 <- simulateResiduals(mod3)
+res4 <- simulateResiduals(mod4)
+
+# Set plotting layout
+par(mfrow = c(2, 2))
+
+# Plot each separately
+plot(res1, main = "Null")
+plot(res2, main = "Saturated")
+plot(res3, main = "Model 3")
+plot(res4, main = "Model 4")
 
 
 ```
 
+
+## g. Select the best model
 
 
 
