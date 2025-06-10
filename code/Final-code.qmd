@@ -118,6 +118,9 @@ nest_clean <- nest_boxes |> #make an object called nest_clean
   clean_names() |> #clean the names to get rid of "."
   mutate(season = as.factor(season)) #make box_occupant a factor w 4 levels
 
+nest_smaple <-  nest_clean |> 
+  count(season)
+
 nest_explore <- nest_boxes |> 
   clean_names() |>  #clean the names of columns to remove . and replace with _ 
   mutate(bin = cut(edge_distance, breaks = 10)) |> 
@@ -183,19 +186,19 @@ mod4 <-  glm(sp ~ edge_distance,
 
 ```{r}
 # Simulate residuals for each model
-res1 <- simulateResiduals(mod1) #null
-res2 <- simulateResiduals(mod2) #saturated 
-res3 <- simulateResiduals(mod3)
-res4 <- simulateResiduals(mod4)
+residuals1 <- simulateResiduals(mod1) #null
+residuals2 <- simulateResiduals(mod2) #saturated 
+residuals3 <- simulateResiduals(mod3)
+residuals4 <- simulateResiduals(mod4)
 
 # Set plotting layout
 par(mfrow = c(2, 2))
 
 # Plot each separately
-plot(res1, main = "Null")
-plot(res2, main = "Saturated")
-plot(res3, main = "Model 3")
-plot(res4, main = "Model 4")
+plot(residuals1, main = "Null")
+plot(residuals2, main = "Saturated")
+plot(residuals3, main = "Model 3")
+plot(residuals4, main = "Model 4")
 
 
 ```
@@ -232,13 +235,13 @@ ggplot(data = model_df,
             y = predicted,
             color = group,
             fill = group)) + #probability occupied by a swift parrot
-  geom_point(color = "darkgrey") +
+  geom_point() +
   geom_ribbon(
               aes(ymin = conf.low,
                   ymax = conf.high),
               alpha = .25,
               color = NA) +
-  geom_line(color = "darkgrey") +
+  geom_line() +
   theme_bw() +
   theme(
         panel.grid.major = element_blank(),   # remove major gridlines
@@ -247,6 +250,8 @@ ggplot(data = model_df,
   labs(x = "Distance to forest edge (m)",
        y = "Probability of box occupancy (%)") +
   scale_fill_manual(values = c("2016" = "#9544BF",
+                                "2019" = "#4465BF")) +
+  scale_color_manual(values = c("2016" = "#9544BF",
                                 "2019" = "#4465BF"))
 
 
@@ -255,7 +260,7 @@ ggplot(data = model_df,
 
 ## i. Write a caption for your figure
 
-
+**Fig. 1 Swift Parrots have a lower probability of occupancy with greater distance to forest edge.** Data from DRYAD "Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird." The points represent individual predictions using the saturated generalized linear model with lines connecting them. The ribbons represent the confidence interval of the predictions. The color represent data from each season with 2016 in purple and 2019 in blue.
 
 
 
