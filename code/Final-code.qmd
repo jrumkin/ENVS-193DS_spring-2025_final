@@ -19,7 +19,9 @@ link to GitHub repo: <https://github.com/jrumkin/ENVS-193DS_spring-2025_final>
 library(tidyverse)
 library(janitor)
 library(here) #for file management
+library(ggeffects)
 library(DHARMa) #for model diagnostics
+library(MuMIn) #for AICc best model
 
 #read in data used for assignment
 sst <- read.csv(here("data", "SST_update2023.csv")) #using package 'here' to fix file path issue
@@ -120,13 +122,14 @@ nest_explore <- nest_boxes |>
   clean_names() |>  #clean the names of columns to remove . and replace with _ 
   mutate(bin = cut(edge_distance, breaks = 10)) |> 
   group_by(bin) |> 
-  summarise(prop_occupied = mean(sp),
-            mid = mean(edge_distance)) |> 
-  ggplot(aes(x = mid, y = prop_occupied)) +
+  mutate(prop_occupied = mean(sp),
+            mid = mean(edge_distance))
+
+  ggplot(data = nest_explore,
+         aes(x = mid, y = prop_occupied)) +
   geom_point() +
   geom_smooth(method = lm, se = FALSE)
 
-nest_explore
 
 
 ```
@@ -199,6 +202,59 @@ plot(res4, main = "Model 4")
 
 
 ## g. Select the best model
+
+```{r}
+
+AICc(mod1,
+     mod2,
+     mod3,
+     mod4) |> 
+  arrange(AICc) # arranging output in descending order of AIC
+
+
+```
+
+
+Akaike’s Information Criterion defined model 2 as the best model. This model says that Swift Parrot presence in the nest boxes is best predicted by considering the season and the distance to forest edge. 
+
+
+## h. Visualize the model predictions
+
+```{r}
+
+model_prediction <- ggpredict(mod2,
+                              terms = c("edge_distance [all]", "season")) 
+
+model_df <- as.data.frame(model_prediction) #make the object into a data frame to use in ggplot properly
+
+ggplot(data = model_df,
+       aes( x = x,
+            y = predicted,
+            color = group,
+            fill = group)) + #probability occupied by a swift parrot
+  geom_point(color = "darkgrey") +
+  geom_ribbon(
+              aes(ymin = conf.low,
+                  ymax = conf.high),
+              alpha = .25,
+              color = NA) +
+  geom_line(color = "darkgrey") +
+  theme_bw() +
+  theme(
+        panel.grid.major = element_blank(),   # remove major gridlines
+        panel.grid.minor = element_blank(), #remove minor gridlines
+        legend.position = "none") +
+  labs(x = "Distance to forest edge (m)",
+       y = "Probability of box occupancy (%)") +
+  scale_fill_manual(values = c("2016" = "#9544BF",
+                                "2019" = "#4465BF"))
+
+
+
+```
+
+## i. Write a caption for your figure
+
 
 
 
