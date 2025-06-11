@@ -1,7 +1,7 @@
 ---
 title: "Final-code"
 author: "Jessi Rumkin"
-date: "June 7, 2025"
+date: "June 11, 2025"
 format:
   html:
     toc: true # to display a table of contents
@@ -17,9 +17,9 @@ link to GitHub repo: <https://github.com/jrumkin/ENVS-193DS_spring-2025_final>
 ```{r}
 #read in packages
 library(tidyverse)
-library(janitor)
+library(janitor) #package for cleaning data
 library(here) #for file management
-library(ggeffects)
+library(ggeffects) #package for prediction model
 library(DHARMa) #for model diagnostics
 library(MuMIn) #for AICc best model
 library(scales) #used for manual axis customization 
@@ -35,19 +35,19 @@ nest_boxes <-  read.csv(here("data", "occdist.csv")) #using 'here' to fix file p
 
 ## a. Transparent statistical methods
 
-In part 1 they used ((something to determine correlation between variables)). In part 2 they used ((something to determine if there is a difference in means between more than 2 groups)).
+In part 1 they used Pearson's correlation test. In part 2 they used a one way ANOVA test.
 
-## b. More information needed \*\*\*
+## b. More information needed
 
-An additional piece of information that should be given is the type of t-test that was ran in both parts so the reader can use that to learn about the data type and assumptions made.
+An additional piece of information that should be given is the type of statistical test that was ran in both parts so the reader can use that to learn about the data type and assumptions made.
 
-An additional test that could be performed is a Cohen's d in order to quantify the effect size between groups. This increases data transparency and helps the reader understand the result.
+An additional test that could be performed is a eta squared test in order to quantify the effect size between groups. This increases data transparency and helps the reader understand the result.
 
 ## c. Suggestions for rewriting
 
-We found a **effect size** (Cohen's d = **Cohen's d value**) correlation between distance from headwater (km) and annual total nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.03, $\alpha$ = **significance level**).
+We found a **effect size** (eta^2^ = **value**) correlation between distance from headwater (km) and annual total nitrogen load (kg year^-1^) (**Type of test**, **test variable**(**degree of freedom**) = **value**, p = 0.03, $\alpha$ = **significance level**).
 
-We found a **effect size** (Cohen's d = **Cohen's d value**) difference in average nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.02, $\alpha$ = **significance level**) between sources (urban land n = **group sample size**, atmospheric deposition n = **group sample size**, fertilizer n = **group sample size**, wastewater treatment n = **group sample size**, and grasslands n = **group sample size**).
+We found a **effect size** (eta^2^ = **value**) difference in average nitrogen load (kg year^-1^) (**Type of t-test**, t(**degree of freedom**) = **t value**, p = 0.02, $\alpha$ = **significance level**) between sources (urban land n = **group sample size**, atmospheric deposition n = **group sample size**, fertilizer n = **group sample size**, wastewater treatment n = **group sample size**, and grasslands n = **group sample size**).
 
 # Problem 2. Data Visualzation
 
@@ -57,7 +57,7 @@ Notes to myself on things that need to be done or be true abt the data table: 1.
 
 ```{r}
 
-sst_clean <-  sst |> 
+sst_clean <-  sst |> #new object called sst_clean from sst data
   mutate(date = ymd(date), #make the date column into year-month-date recognized data
          year = year(date), #make a new column of the year from the date column
          month = month(date)) |>  #make a new column of the month from the date column
@@ -96,15 +96,14 @@ sst_visual <- ggplot(data = sst_clean, # make a new object called sst_visual, us
                            "2022" = "#523467", 
                            "2023" = "#2F193E" )) +
   theme_bw() +
-  theme(plot.background = element_rect(fill = "white"),
-        panel.grid.major = element_blank(),   # remove major gridlines
+  theme(panel.grid.major = element_blank(),   # remove major gridlines
         panel.grid.minor = element_blank(), #remove minor gridlines
-        legend.position = c(.1, .7)) + #***
-  labs( x = "Month",
-        y = "Mean monthly sea surface temperature (°C)",
-        legend = "Year")
+        legend.position = c(.1, .7)) + #place the legend inside the plot, top left corner
+  labs( x = "Month", #manual x axis label
+        y = "Mean monthly sea surface temperature (°C)", #y axis manual lable
+        legend = "Year") #manual legend name
 
-sst_visual
+sst_visual #print the visual
 
 
 ```
@@ -112,15 +111,15 @@ sst_visual
 # Problem 3 Data analysis
 
 ```{r}
-#| label: Cleaning next_boxes data
+#| label: sneaky chunk
 #| include: false
 
 nest_clean <- nest_boxes |> #make an object called nest_clean
   clean_names() |> #clean the names to get rid of "."
-  mutate(season = as.factor(season)) #make box_occupant a factor w 4 levels
+  mutate(season = as.factor(season)) #make season a factor w/ 2 levels
 
-nest_smaple <-  nest_clean |> 
-  count(season)
+nest_smaple <-  nest_clean |> #make a new object called nest_sampple
+  count(season) #
 
 nest_explore <- nest_boxes |> 
   clean_names() |>  #clean the names of columns to remove . and replace with _ 
@@ -143,7 +142,7 @@ nest_explore <- nest_boxes |>
 
 ## a. Response variable
 
-The 1s and 0s in the columns sp, cs, and tm represent the species type in each nest box observation for Swift Parrot, Common Starling, and Tree Martin respectively where a 1 means that species was observed and a0 means it was another species or empty. The column e represents if the nest box was occupied or not, with a 1 meaning it was empty and a 0 meaning it was occupied.
+The 1s and 0s in the columns sp, cs, and tm represent the species type in each nest box observation for Swift Parrot, Common Starling, and Tree Martin respectively where a 1 means that species was observed and a 0 means it was another species or empty. The column e represents if the nest box was occupied or not, with a 1 meaning it was empty and a 0 meaning it was occupied.
 
 ## b. Purpose of study
 
@@ -151,12 +150,12 @@ Swift Parrots are unique because they are the focus bird for restoration purpose
 
 ## c. Difference in “seasons”
 
-The study uses data on the summer breeding seasons for Swift Parrots of 2016 and of 2019. Data was collected in November and some in December in each study season, which coincided with the fledging period for Common Starlings, mid nestling period for Swift Parrots, and nest building for Tree Martins. Swift Parrots returned to the site in 2019 because of a mast tree flowering event, and were otherwise not present at the study site.
+The study uses data on the summer breeding seasons for Swift Parrots of 2016 and of 2019. Data was collected in November and some in December in each study season, which coincided with the fledging period for Common Starlings, mid nestling period for Swift Parrots, and nest building for Tree Martins. Swift Parrots returned to the site which still had the nest boxes in 2019 because of a mast tree flowering event, and were otherwise not present at the study site.
 
 ## d. Table of models
 
 | Model Number | Season | Distance to forest edge | Model description             |
-|-----------------|-----------------|-----------------|---------------------|
+|------------------|------------|-------------------|-------------------------|
 | 1            |        |                         | No predictors (null)          |
 | 2            | ✓      | ✓                       | Season + Distance (saturated) |
 | 3            | ✓      |                         | Season only                   |
@@ -166,7 +165,7 @@ The study uses data on the summer breeding seasons for Swift Parrots of 2016 and
 
 ```{r}
 
-mod1 <-  glm(sp ~ 1, #null model #running a generalized linear model because the data is continuous against binary
+mod1 <-  glm(sp ~ 1, #null model #running a generalized linear model because the data is continuous against binary #making the models into object, this also prevents the output display
                    data = nest_clean,
                    family = "binomial") #specifies a binary response variable (Swift Parrot occupancy in the nest boxes)
 
@@ -193,13 +192,11 @@ residuals2 <- simulateResiduals(mod2) #saturated
 residuals3 <- simulateResiduals(mod3) #season (year) only
 residuals4 <- simulateResiduals(mod4) #distance only
 
-par(mfrow = c(2, 2)) # Set plotting layout
-
 #plotting each residuals model separately
-plot(residuals1, main = "Model 1, Null")
-plot(residuals2, main = "Model 2, Saturated")
-plot(residuals3, main = "Model 3, year only")
-plot(residuals4, main = "Model 4, distance only")
+plot(residuals1)
+plot(residuals2)
+plot(residuals3)
+plot(residuals4)
 
 
 ```
@@ -217,7 +214,7 @@ AICc(mod1, #Akaike’s Information Criterion from the MuMIn package to choose th
 
 ```
 
-Akaike’s Information Criterion defined model 2 as the best model. This model says that Swift Parrot presence in the nest boxes is best predicted by considering the season and the distance to forest edge.
+Akaike’s Information Criterion defined the best model to be that Swift Parrot presence in the nest boxes is best predicted by considering the season and the distance to forest edge.
 
 ## h. Visualize the model predictions
 
@@ -229,7 +226,6 @@ model_prediction <- ggpredict(mod2, #make a new object of the model prediction m
                               terms = c("edge_distance [all]", "season"))  #predictions are made across the entire rand of diatances, and the "season" is being used to seperate data from 2016 and 2019
 model_df <- as.data.frame(model_prediction) |> #make the model_prediction into a data frame useable by ggplot2
   rename(Season = group) #rename the "group" column into "season" (make legend easier)
-model_plot <-  plot(model_prediction, show_data = TRUE) #use the ggeffects and base plot() function to make a plot with the prediction ribbon
 
 ggplot(model_df, #using ggplot to add customizations and geometry layers to the plot
        aes(x = x,  #x axis is the distance to forest edge
@@ -241,17 +237,16 @@ ggplot(model_df, #using ggplot to add customizations and geometry layers to the 
               alpha = 0.25,  #make the ribbon 25% transparent
               color = NA) + #no outline color for the ribbons
   geom_line() + #adds a line between prediction points for legibility
-  geom_point(size = 1.2) +  # adds the prediction points
   geom_jitter(data = nest_explore,  #underlying data points (binary occupancy) (minimal jitter the points for legibility and reduce overlap)
               aes(x = edge_distance, #x axis is distance
                   y = sp, #y axis is binary occupation data of swift parrots
                   color = season), #data is colored by the season
-              inherit.aes = FALSE, #doesn't inherit aesthics from orignal call on ggplot
+              inherit.aes = FALSE, #doesn't inherit aesthetics from original call on ggplot
               height = 0.02, #minimal height jitter to increase legibility
-              alpha = 0.35, #makes the data  35% transparent
+              alpha = 0.4, #makes the data  40% transparent
               size = 1, #manual size of the data 
-              shape = 2) + #gives the data an open triangle shape to seperate them from the prediction data points
-  scale_color_manual(values = c("2016" = "#9544BF", "2019" = "#4465BF")) + #maual color for points and lines
+              shape = 2) + #gives the data an open triangle shape to separate them from the prediction data points
+  scale_color_manual(values = c("2016" = "#9544BF", "2019" = "#4465BF")) + #manual color for points and lines
   scale_fill_manual(values = c("2016" = "#9544BF", "2019" = "#4465BF")) + #manual color for ribbon fill
   scale_y_continuous(labels = percent_format(accuracy = 1)) +  #format y axis as % using scales package
   labs(x = "Distance to forest edge (m)", #manual labels for x axis
@@ -270,7 +265,7 @@ ggplot(model_df, #using ggplot to add customizations and geometry layers to the 
 
 ## i. Write a caption for your figure
 
-**Fig. 1 Swift Parrots have a higher probability of occupancy with less distance to forest edge.** Data from DRYAD "Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird." The circle points represent individual predictions using the saturated generalized linear model with lines connecting them and the ribbons represent the 95% confidence interval of the predictions. The triangle points represent binary occupancy data collected on Swift Parrots (2016 n = 104, 2019 n = 123) used to build the model predictions. The color represent data from each season with 2016 in purple and 2019 in blue
+**Fig. 1 Swift Parrots have a higher probability of occupancy with less distance to forest edge.** Data from DRYAD "Do nest boxes breed the target species or its competitors? A case study of a critically endangered bird." https://doi.org/10.5061/dryad.83bk3j9sb The lines represent the predictions using the saturated generalized linear model and the ribbons represent the 95% confidence interval of the predictions. The triangle points represent binary occupancy data collected on Swift Parrots (2016 n = 104, 2019 n = 123) used to build the model predictions. The color represent data from each season with 2016 in purple and 2019 in blue.
 
 ## j. Calculate model predictions
 
@@ -288,4 +283,22 @@ ggpredict(mod2, #use ggpredict which automatically uses 95% confidence interval 
 
 ## k. Interpret your results
 
-Probability of a Swift Parrot occupying a nest box is highest when the nest box is close to the forest edge both for when the nest boxes are first installed and three years after installation which can be seen in Figure 1. Swift Parrots are also more likely to occupy a nest box in the first season the boxes are installed, which can be seen in the calculated model predictions. Swift Parrots rarely return to a previous nesting site, so their use of nest boxes declines over time. The other bird species present, Tree Martin and Common Starling, also both present dominant behavior over the Swift Parrot and will occupy the nests when the Swift Parrots are not present.
+Probability of a Swift Parrot occupying a nest box is highest when the nest box is close to the forest edge (48% chance occupancy at any given box at 0 meters in 2016, 30% occupancy in 2019). The probability is much lower when the nest box is far from the forest edge (900 m from forest edge: 12% in 2016 and 6% in 2019). Swift Parrots rarely return to a previous nesting site, so their use of nest boxes declines over time. The other bird species present, Tree Martin and Common Starling, also both present dominant behavior over the Swift Parrot and will occupy the nests when the Swift Parrots are not present.
+
+# Problem 4. Affective and exploratory visualizations
+
+## a. Comparing visualizations
+
+The visuals are quite different because the data visuals and purely about data the affective version is an artistic rendition of that data. Each data point became a representative doodle in order to give the viewer a sense of substance and beauty, and take the focus away from comparing the two groups.
+
+My affective visualization matches the data pretty literally because the art is a representation of the same data. The exploratory visualization showed the mean productivity score and 95% confidence intervals for both groups, as well as the underlying data as a jitter plot. The affective visualization mirrored the jitter plot very closely for where the doodles would go.
+
+I can see in both versions, but more clearly in the exploratory data, that I may have higher productivity when I work with other people, but I also have a larger spread of data acorss high and low productivity. The pattern is slightly obscured in the affective visualization, which was mostly on purpose. Part of the exploratory visualization was plotting each productivity session by date and I saw that I worked more near the end of the quarter and that in turn made me realize that the data I had was also a tangible representation of all of my work I've put into my courses over time and so I added the mountain range in the back to shift the focus towards being proud of all my work instead of comparison between groups.
+
+I recived an extension on homework 3 so I did not have a first draft to show for in workshop, but I did show my exploratory data and tried to explain my vision and goal for the affective version. My peers liked my idea of focusing my affective visualization on community and how much work I've completed over the quarter. I ended up focusing more on the idea of accomplishment because I felt proud of all the data points, even if the Alone category has a lower average.
+
+## b. Sharing your affective visualization
+
+In week 10 workshop, I presented this affective data visualization:
+
+![Fig. 2 - Affective data visualization](images/Affective.png)
